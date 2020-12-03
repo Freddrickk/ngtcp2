@@ -530,13 +530,9 @@ static void setup_default_client(ngtcp2_conn **pconn) {
   memset((*pconn)->dcid.current.token, 0xf1, NGTCP2_STATELESS_RESET_TOKENLEN);
 }
 
-static void setup_handshake_server(ngtcp2_conn **pconn) {
+void setup_handshake_server_with_ids(ngtcp2_conn **pconn, const ngtcp2_cid *dcid, const ngtcp2_cid *scid, ngtcp2_path_storage *path) {
   ngtcp2_conn_callbacks cb;
   ngtcp2_settings settings;
-  ngtcp2_cid dcid, scid;
-
-  dcid_init(&dcid);
-  scid_init(&scid);
 
   memset(&cb, 0, sizeof(cb));
   cb.recv_client_initial = recv_client_initial;
@@ -548,9 +544,17 @@ static void setup_handshake_server(ngtcp2_conn **pconn) {
   cb.rand = genrand;
   server_default_settings(&settings);
 
-  ngtcp2_conn_server_new(pconn, &dcid, &scid, &null_path.path,
-                         NGTCP2_PROTO_VER_MAX, &cb, &settings, /* mem = */ NULL,
-                         NULL);
+  ngtcp2_conn_server_new(pconn, dcid, scid, &path->path,
+                        NGTCP2_PROTO_VER_MAX, &cb, &settings, /* mem = */ NULL,
+                        NULL);
+}
+
+static void setup_handshake_server(ngtcp2_conn **pconn) {
+  ngtcp2_cid dcid, scid;
+
+  dcid_init(&dcid);
+  scid_init(&scid);
+  setup_handshake_server_with_ids(pconn, &dcid, &scid, &null_path);
 }
 
 static void setup_handshake_client(ngtcp2_conn **pconn) {

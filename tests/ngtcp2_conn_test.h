@@ -29,6 +29,10 @@
 #  include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include "ngtcp2_conn.h"
+#include "ngtcp2_cid.h"
+
+
 void init_static_path(void);
 
 void test_ngtcp2_conn_stream_open_close(void);
@@ -80,4 +84,5 @@ void test_ngtcp2_conn_rtb_reclaim_on_pto(void);
 void test_ngtcp2_conn_validate_ecn(void);
 void test_ngtcp2_pkt_write_connection_close(void);
 
+void setup_handshake_server_with_ids(ngtcp2_conn **pconn, const ngtcp2_cid *dcid, const ngtcp2_cid *scid, ngtcp2_path_storage *path);
 #endif /* NGTCP2_CONN_TEST_H */
